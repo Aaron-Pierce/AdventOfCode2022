@@ -2,4 +2,8 @@
 node_modules
 */*.hi
 */*.o
-*/day[0-2][0-9]
+
+# Matches the executables which haskell outputs, which are just
+# ./day04, for example, with no extension, so this matches
+# any file of that form
+*/day[0-2][0-9] 
