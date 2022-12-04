@@ -1,2 +1,5 @@
 */node_modules
 node_modules
+*/*.hi
+*/*.o
+*/day[0-2][0-9]
