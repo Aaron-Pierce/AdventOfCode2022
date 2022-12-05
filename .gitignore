@@ -2,6 +2,7 @@
 node_modules
 */*.hi
 */*.o
+*/dist-newstyle
 
 # Matches the executables which haskell outputs, which are just
 # ./day04, for example, with no extension, so this matches
