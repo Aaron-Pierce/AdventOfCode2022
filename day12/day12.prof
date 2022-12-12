@@ -1,0 +1,166 @@
+	Mon Dec 12 13:39 2022 Time and Allocation Profiling Report  (Final)
+
+	   day12 +RTS -N -p -s -hT -RTS
+
+	total time  =        3.02 secs   (10287 ticks @ 1000 us, 12 processors)
+	total alloc = 11,103,766,120 bytes  (excludes profiling overheads)
+
+COST CENTRE                              MODULE SRC                      %time %alloc
+
+dijkstrasFrontier.lookups.\              Main   day12.hs:61:30-57         29.3    2.6
+dijkstrasFrontier.lookups                Main   day12.hs:61:13-89          8.3   28.6
+dijkstrasFrontier.unvisitedSorted        Main   day12.hs:63:13-104         7.0    9.5
+getReachableNeighbors.maybeNeighbors.\   Main   day12.hs:41:33-59          6.9    0.5
+dijkstrasFrontier.unvisitedElevations    Main   day12.hs:62:13-110         6.2   16.8
+dijkstrasFrontier.newMap.\               Main   day12.hs:74:48-99          5.6    7.2
+dijkstrasFrontier.newFrontier            Main   day12.hs:76:13-144         4.6    3.5
+dijkstrasFrontier.unvisitedNeighbors.\   Main   day12.hs:70:56-88          4.3    0.0
+dijkstrasFrontier.unvisitedSorted.\      Main   day12.hs:63:61-83          4.1    0.0
+dijkstrasFrontier.newFrontier.\          Main   day12.hs:76:51-72          3.1    2.7
+dijkstrasFrontier.newUnvisitedSet        Main   day12.hs:75:13-70          2.8    2.9
+part2.results.\                          Main   day12.hs:133:19-147        2.2    4.4
+dijkstrasFrontier                        Main   day12.hs:(57,1)-(79,64)    2.2    1.6
+getReachableNeighbors.maybeNeighbors     Main   day12.hs:41:9-95           2.1    6.3
+getReachableNeighbors.reachableNeighbors Main   day12.hs:44:9-119          1.8    1.7
+getReachableNeighbors.unwrappedNeighbors Main   day12.hs:43:9-81           1.6    4.1
+getReachableNeighbors.filteredNeighbors  Main   day12.hs:42:9-81           1.1    1.7
+dijkstrasFrontier.updatedNeighbors       Main   day12.hs:71:13-160         1.1    2.6
+getAdjacentCoordinates                   Main   day12.hs:(48,1)-(51,52)    0.8    1.5
+
+
+                                                                                                                          individual      inherited
+COST CENTRE                                         MODULE                  SRC                        no.     entries  %time %alloc   %time %alloc
+
+MAIN                                                MAIN                    <built-in>                 153           0    0.1    0.0   100.0  100.0
+ CAF                                                Main                    <entire-module>            305           0    0.0    0.0     0.0    0.0
+  main                                              Main                    day12.hs:(140,1)-(143,15)  306           1    0.0    0.0     0.0    0.0
+   part2                                            Main                    day12.hs:(128,1)-(138,25)  419           0    0.0    0.0     0.0    0.0
+    part2.results                                   Main                    day12.hs:(132,9)-(135,115) 420           0    0.0    0.0     0.0    0.0
+     part2.results.\                                Main                    day12.hs:133:19-147        421           0    0.0    0.0     0.0    0.0
+      part2.results.\.map                           Main                    day12.hs:133:23-46         422           0    0.0    0.0     0.0    0.0
+       part2.results.fixMap                         Main                    day12.hs:135:17-115        423           0    0.0    0.0     0.0    0.0
+  makeMap                                           Main                    day12.hs:(23,1)-(36,85)    359           0    0.0    0.0     0.0    0.0
+   makeMap.elevations                               Main                    day12.hs:(24,9)-(27,28)    360           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.Conc.Signal         <entire-module>            277           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.IO.Encoding         <entire-module>            261           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.IO.Encoding.Iconv   <entire-module>            259           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.IO.Exception        <entire-module>            253           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.IO.Handle.FD        <entire-module>            251           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.IO.Handle.Internals <entire-module>            250           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.IO.Handle.Text      <entire-module>            249           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.Show                <entire-module>            231           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.Event.Thread        <entire-module>            209           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.IO.FD               <entire-module>            189           0    0.0    0.0     0.0    0.0
+ CAF                                                GHC.Event.Poll          <entire-module>            177           0    0.0    0.0     0.0    0.0
+ main                                               Main                    day12.hs:(140,1)-(143,15)  307           0    0.0    0.0    99.9  100.0
+  part1                                             Main                    day12.hs:(121,1)-(125,43)  308           1    0.0    0.0     0.5    0.4
+   part1.(...)                                      Main                    day12.hs:124:9-142         321           1    0.0    0.0     0.5    0.4
+    dijkstrasFrontier                               Main                    day12.hs:(57,1)-(79,64)    323        3319    0.0    0.0     0.5    0.4
+     dijkstrasFrontier.(...)                        Main                    day12.hs:65:13-49          328        3318    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.coordToVisit                 Main                    day12.hs:65:13-49          332        3318    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.elevToVisit                  Main                    day12.hs:65:13-49          349        3318    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.lookups                      Main                    day12.hs:61:13-89          325        3318    0.0    0.1     0.2    0.1
+      dijkstrasFrontier.lookups.\                   Main                    day12.hs:61:30-57          327       80180    0.1    0.0     0.1    0.0
+     dijkstrasFrontier.neighbors                    Main                    day12.hs:69:13-80          335        3318    0.0    0.0     0.1    0.1
+      getReachableNeighbors                         Main                    day12.hs:(40,1)-(45,22)    336        3318    0.0    0.0     0.1    0.1
+       getReachableNeighbors.filteredNeighbors      Main                    day12.hs:42:9-81           339        3318    0.0    0.0     0.0    0.0
+        getReachableNeighbors.filteredNeighbors.\   Main                    day12.hs:42:57-65          341       13272    0.0    0.0     0.0    0.0
+       getReachableNeighbors.maybeNeighbors         Main                    day12.hs:41:9-95           337        3318    0.0    0.0     0.0    0.0
+        getReachableNeighbors.maybeNeighbors.\      Main                    day12.hs:41:33-59          340       13272    0.0    0.0     0.0    0.0
+        getAdjacentCoordinates                      Main                    day12.hs:(48,1)-(51,52)    338        3318    0.0    0.0     0.0    0.0
+         cadd                                       Main                    day12.hs:10:1-49           342       13272    0.0    0.0     0.0    0.0
+       getReachableNeighbors.reachableNeighbors     Main                    day12.hs:44:9-119          344        3318    0.0    0.0     0.0    0.0
+        getReachableNeighbors.reachableNeighbors.\  Main                    day12.hs:44:71-99          347       13031    0.0    0.0     0.0    0.0
+       getReachableNeighbors.unwrappedNeighbors     Main                    day12.hs:43:9-81           343        3318    0.0    0.0     0.0    0.0
+        getReachableNeighbors.unwrappedNeighbors.\  Main                    day12.hs:43:43-58          345       13031    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.newFrontier                  Main                    day12.hs:76:13-144         334        3318    0.0    0.0     0.1    0.0
+      dijkstrasFrontier.newFrontier.\               Main                    day12.hs:76:51-72          352        5681    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.newMap                       Main                    day12.hs:74:13-121         354        3318    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.newMap.\                    Main                    day12.hs:74:48-99          355        5681    0.0    0.0     0.0    0.0
+       dijkstrasFrontier.newMap.\.\                 Main                    day12.hs:74:71-85          357        5681    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.newUnvisitedSet              Main                    day12.hs:75:13-70          333        3318    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.toVisit                      Main                    day12.hs:64:13-42          329        3318    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.unvisitedElevations          Main                    day12.hs:62:13-110         326        3318    0.0    0.1     0.0    0.1
+      dijkstrasFrontier.unvisitedElevations.\       Main                    day12.hs:62:48-63          331       80180    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.unvisitedNeighbors           Main                    day12.hs:70:13-99          350        3318    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.unvisitedNeighbors.\        Main                    day12.hs:70:56-88          351       11886    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.unvisitedSorted              Main                    day12.hs:63:13-104         330        3318    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.unvisitedSorted.\           Main                    day12.hs:63:61-83          358       80749    0.0    0.0     0.0    0.0
+     dijkstrasFrontier.updatedNeighbors             Main                    day12.hs:71:13-160         353        3318    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.updatedNeighbors.\          Main                    day12.hs:71:51-107         356        5681    0.0    0.0     0.0    0.0
+   part1.(...)                                      Main                    day12.hs:123:9-48          309           1    0.0    0.0     0.0    0.0
+    makeMap                                         Main                    day12.hs:(23,1)-(36,85)    310           1    0.0    0.0     0.0    0.0
+     makeMap.coordinates                            Main                    day12.hs:(28,9)-(31,25)    312           1    0.0    0.0     0.0    0.0
+     makeMap.elevations                             Main                    day12.hs:(24,9)-(27,28)    315           1    0.0    0.0     0.0    0.0
+     makeMap.m_converted_endpoints                  Main                    day12.hs:35:9-136          322           1    0.0    0.0     0.0    0.0
+      makeMap.m_converted_endpoints.\               Main                    day12.hs:35:56-129         346        3321    0.0    0.0     0.0    0.0
+       convertEndpointElevs                         Main                    day12.hs:(17,1)-(20,10)    348        3321    0.0    0.0     0.0    0.0
+     makeMap.pre_m                                  Main                    day12.hs:32:9-65           314           1    0.0    0.0     0.0    0.0
+     makeMap.sortedStartAndEnd                      Main                    day12.hs:34:9-106          317           1    0.0    0.0     0.0    0.0
+      makeMap.sortedStartAndEnd.\                   Main                    day12.hs:34:73-93          318           1    0.0    0.0     0.0    0.0
+     makeMap.startAndEnd                            Main                    day12.hs:33:9-107          311           1    0.0    0.0     0.0    0.0
+      makeMap.startAndEnd.\                         Main                    day12.hs:33:67-100         316        3321    0.0    0.0     0.0    0.0
+   part1.endPos                                     Main                    day12.hs:123:9-48          320           1    0.0    0.0     0.0    0.0
+   part1.map                                        Main                    day12.hs:123:9-48          319           1    0.0    0.0     0.0    0.0
+   part1.resMap                                     Main                    day12.hs:124:9-142         361           1    0.0    0.0     0.0    0.0
+   part1.rows                                       Main                    day12.hs:122:9-26          313           1    0.0    0.0     0.0    0.0
+   part1.startPos                                   Main                    day12.hs:123:9-48          324           1    0.0    0.0     0.0    0.0
+  part2                                             Main                    day12.hs:(128,1)-(138,25)  362           1    0.0    0.0    99.4   99.6
+   part2.(...)                                      Main                    day12.hs:130:9-62          363           1    0.0    0.0     0.0    0.0
+    makeMap                                         Main                    day12.hs:(23,1)-(36,85)    364           1    0.0    0.0     0.0    0.0
+     makeMap.coordinates                            Main                    day12.hs:(28,9)-(31,25)    367           1    0.0    0.0     0.0    0.0
+     makeMap.elevations                             Main                    day12.hs:(24,9)-(27,28)    370           1    0.0    0.0     0.0    0.0
+     makeMap.m_converted_endpoints                  Main                    day12.hs:35:9-136          366           1    0.0    0.0     0.0    0.0
+      makeMap.m_converted_endpoints.\               Main                    day12.hs:35:56-129         372        3321    0.0    0.0     0.0    0.0
+       convertEndpointElevs                         Main                    day12.hs:(17,1)-(20,10)    373        3321    0.0    0.0     0.0    0.0
+     makeMap.pre_m                                  Main                    day12.hs:32:9-65           369           1    0.0    0.0     0.0    0.0
+     makeMap.sortedStartAndEnd                      Main                    day12.hs:34:9-106          384           1    0.0    0.0     0.0    0.0
+      makeMap.sortedStartAndEnd.\                   Main                    day12.hs:34:73-93          385           1    0.0    0.0     0.0    0.0
+     makeMap.startAndEnd                            Main                    day12.hs:33:9-107          382           1    0.0    0.0     0.0    0.0
+      makeMap.startAndEnd.\                         Main                    day12.hs:33:67-100         383        3321    0.0    0.0     0.0    0.0
+   part2.allAs                                      Main                    day12.hs:131:9-102         365           1    0.0    0.0     0.0    0.0
+    part2.allAs.\                                   Main                    day12.hs:131:65-76         371        3321    0.0    0.0     0.0    0.0
+   part2.dists                                      Main                    day12.hs:137:9-40          377           1    0.0    0.0     0.0    0.0
+   part2.givenEndPos                                Main                    day12.hs:130:9-62          425           1    0.0    0.0     0.0    0.0
+   part2.givenStartPos                              Main                    day12.hs:130:9-62          381           1    0.0    0.0     0.0    0.0
+   part2.initMap                                    Main                    day12.hs:130:9-62          376           1    0.0    0.0     0.0    0.0
+   part2.results                                    Main                    day12.hs:(132,9)-(135,115) 374           1    0.0    0.0    99.4   99.5
+    part2.results.\                                 Main                    day12.hs:133:19-147        378        1014    2.2    4.4    99.4   99.5
+     dijkstrasFrontier                              Main                    day12.hs:(57,1)-(79,64)    386      854426    2.1    1.6    97.2   95.2
+      dijkstrasFrontier.(...)                       Main                    day12.hs:65:13-49          390      853412    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.coordToVisit                Main                    day12.hs:65:13-49          394      853412    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.elevToVisit                 Main                    day12.hs:65:13-49          409      853412    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.lookups                     Main                    day12.hs:61:13-89          387      853412    8.3   28.5    37.4   31.0
+       dijkstrasFrontier.lookups.\                  Main                    day12.hs:61:30-57          389    17872791   29.2    2.6    29.2    2.6
+      dijkstrasFrontier.neighbors                   Main                    day12.hs:69:13-80          397      853412    0.2    0.2    16.8   16.5
+       getReachableNeighbors                        Main                    day12.hs:(40,1)-(45,22)    398      853412    0.3    0.0    16.5   16.3
+        getReachableNeighbors.filteredNeighbors     Main                    day12.hs:42:9-81           401      853412    1.1    1.7     1.2    1.7
+         getReachableNeighbors.filteredNeighbors.\  Main                    day12.hs:42:57-65          403     3413648    0.1    0.0     0.1    0.0
+        getReachableNeighbors.maybeNeighbors        Main                    day12.hs:41:9-95           399      853412    2.1    6.3    10.4    8.7
+         getReachableNeighbors.maybeNeighbors.\     Main                    day12.hs:41:33-59          402     3413648    6.9    0.5     6.9    0.5
+         getAdjacentCoordinates                     Main                    day12.hs:(48,1)-(51,52)    400      853412    0.8    1.5     1.4    2.0
+          cadd                                      Main                    day12.hs:10:1-49           404     3413648    0.6    0.5     0.6    0.5
+        getReachableNeighbors.reachableNeighbors    Main                    day12.hs:44:9-119          406      853412    1.8    1.7     2.5    1.8
+         getReachableNeighbors.reachableNeighbors.\ Main                    day12.hs:44:71-99          408     3351714    0.7    0.1     0.7    0.1
+        getReachableNeighbors.unwrappedNeighbors    Main                    day12.hs:43:9-81           405      853412    1.6    4.1     2.1    4.1
+         getReachableNeighbors.unwrappedNeighbors.\ Main                    day12.hs:43:43-58          407     3351714    0.5    0.0     0.5    0.0
+      dijkstrasFrontier.newFrontier                 Main                    day12.hs:76:13-144         396      853412    4.5    3.4     7.6    6.1
+       dijkstrasFrontier.newFrontier.\              Main                    day12.hs:76:51-72          412     1447993    3.0    2.6     3.0    2.6
+      dijkstrasFrontier.newMap                      Main                    day12.hs:74:13-121         414      853412    0.4    0.0     6.0    7.2
+       dijkstrasFrontier.newMap.\                   Main                    day12.hs:74:48-99          415     1447993    5.6    7.2     5.6    7.2
+        dijkstrasFrontier.newMap.\.\                Main                    day12.hs:74:71-85          417     1447993    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.newUnvisitedSet             Main                    day12.hs:75:13-70          395      853412    2.8    2.9     2.8    2.9
+      dijkstrasFrontier.toVisit                     Main                    day12.hs:64:13-42          391      853412    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.unvisitedElevations         Main                    day12.hs:62:13-110         388      853412    6.1   16.7     6.1   16.7
+       dijkstrasFrontier.unvisitedElevations.\      Main                    day12.hs:62:48-63          393    17872791    0.0    0.0     0.0    0.0
+      dijkstrasFrontier.unvisitedNeighbors          Main                    day12.hs:70:13-99          410      853412    0.9    1.0     5.2    1.0
+       dijkstrasFrontier.unvisitedNeighbors.\       Main                    day12.hs:70:56-88          411     3037312    4.2    0.0     4.2    0.0
+      dijkstrasFrontier.unvisitedSorted             Main                    day12.hs:63:13-104         392      853412    7.0    9.4    11.1    9.4
+       dijkstrasFrontier.unvisitedSorted.\          Main                    day12.hs:63:61-83          418    17984622    4.1    0.0     4.1    0.0
+      dijkstrasFrontier.updatedNeighbors            Main                    day12.hs:71:13-160         413      853412    1.1    2.6     2.0    2.7
+       dijkstrasFrontier.updatedNeighbors.\         Main                    day12.hs:71:51-107         416     1447993    0.9    0.1     0.9    0.1
+     part2.results.\.map                            Main                    day12.hs:133:23-46         379        1014    0.0    0.0     0.0    0.0
+      part2.results.fixMap                          Main                    day12.hs:135:17-115        380        1014    0.0    0.0     0.0    0.0
+   part2.rows                                       Main                    day12.hs:129:9-26          368           1    0.0    0.0     0.0    0.0
+   part2.solves                                     Main                    day12.hs:136:9-81          375           1    0.0    0.0     0.0    0.0
+    part2.solves.\                                  Main                    day12.hs:136:36-68         424        1014    0.0    0.0     0.0    0.0
