@@ -1,14 +1,23 @@
+{-# LANGUAGE BinaryLiterals#-}
+
+
 import Text.Parsec
 import Data.Either (rights)
-import Data.Set
-import Data.Map
-import Data.Maybe (fromJust)
+import Data.Set (Set, insert, notMember, empty, toList, delete, null, fromList, size)
+import Data.Map (Map, fromList, insert, lookup, empty, keys)
+import Data.Maybe (fromJust, isNothing)
 import Data.List (sortBy, permutations, nub)
-import Data.Foldable (minimumBy)
-import Data.Foldable (maximumBy)
+import Data.Foldable (find, maximumBy, minimumBy)
+import Data.Bits
 
 fst3 :: (a,b,c) -> a
 fst3 (x,_,_) = x
+
+snd3 :: (a,b,c) -> b
+snd3 (_,x,_) = x
+
+thd :: (a,b,c) -> c
+thd (_,_,x) = x
 parseValve = do
     string "Valve "
     valveName <- many letter
@@ -38,13 +47,9 @@ pathTo adjMap visitedSet v1 v2
         } in if (Prelude.null validPaths) then Nothing else Just $ v1 : (minimumBy (\a b -> length a `compare` length b) validPaths)
     where unvisitedNeighbors = Prelude.filter (`Data.Set.notMember` visitedSet) (fromJust (v1 `Data.Map.lookup` adjMap))
 
-score :: AdjacencyMap -> Minutes -> Valve -> Valve -> Int
-score adjMap timeLeft currentValve targetValve = do
-    let path = fromJust (pathTo adjMap Data.Set.empty (name currentValve) (name targetValve))
-    let distance = length path - 1
-    flowRate targetValve * (timeLeft - distance - 1)
 
 type Minutes = Int
+type TimeLeft = Minutes
 type ValveName = String
 type FlowRate = Int
 type Valve = (ValveName, FlowRate)
@@ -52,81 +57,112 @@ name = fst
 flowRate = snd
 type ClosedValves = Set Valve
 type AdjacencyMap = Map ValveName [ValveName]
+type ShortestPathMap = Map (ValveName, ValveName) [ValveName]
 
 buildMap :: [(Valve, [ValveName])] -> AdjacencyMap
 buildMap valvesWithNeighbors = Data.Map.fromList ((\p -> (fst $ fst p, snd p)) <$> valvesWithNeighbors)
 
-takeAction :: AdjacencyMap -> (Minutes, Valve, ClosedValves, Int) -> (Minutes, Valve, ClosedValves, Int) 
-takeAction adjMap (minutesLeft, currentValve, closedValves, points) = do
-    let possibleTargets = Data.Set.toList closedValves 
-    let scores = score adjMap minutesLeft (currentValve) <$> possibleTargets
-    let zipped = zip possibleTargets scores
-    let move = maximumBy (\a b -> snd a `compare` snd b) zipped
-    let moveDistance = length $ fromJust (pathTo adjMap Data.Set.empty (name currentValve) (name $ fst move))
-    let newTime = minutesLeft - moveDistance 
-    (newTime, fst move, fst move `Data.Set.delete` closedValves, points + newTime * (flowRate $ fst move))
+buildShortestPathMap :: AdjacencyMap -> ShortestPathMap
+buildShortestPathMap adjMap = Prelude.foldl (\spMap pair -> Data.Map.insert pair (fromJust $ uncurry (pathTo adjMap Data.Set.empty) pair) (spMap)) Data.Map.empty [(v1, v2) | v1 <- Data.Map.keys adjMap, v2 <- Data.Map.keys adjMap]
 
 
-prettyPrintResult :: (Minutes, Valve, ClosedValves, Int) -> String
-prettyPrintResult (a, b, _, c) = show (a, b, c)
-
-takeAction2 :: AdjacencyMap -> (Minutes, Valve, ClosedValves, Int) -> (Minutes, Valve, ClosedValves, Int) 
-takeAction2 adjMap (minutesLeft, currentValve, closedValves, points) = do
-    let possibleTargets = Data.Set.toList closedValves 
-    let firstResults = (\t -> carryOut adjMap t (minutesLeft, currentValve, closedValves, points)) <$> possibleTargets
-    let secondResults = (\(mleft, curv, closv, scor) -> (\x -> carryOut adjMap  x (mleft, curv, closv, scor)) <$> Data.Set.toList closv ) <$> firstResults
-
-    let z = zip (prettyPrintResult <$> firstResults) (fmap prettyPrintResult <$> secondResults)
-    error $ concat $ (\(fst, seconds) -> fst ++ "\n" ++ (unlines $ ("\t" ++ ) <$> seconds)) <$> z
-    -- let k =  ((\lst -> fmap prettyPrintResult lst) <$> secondResults)
-    -- error $ unlines $  concat k
+solve :: AdjacencyMap -> ShortestPathMap -> ClosedValves -> TimeLeft -> Valve -> ([ValveName], Int)
+solve adjMap pathMap closedValves minutesLeft currentValve
+    | minutesLeft <= 0 = ([name currentValve], 0)
+    | Data.Set.null closedValves = ([name currentValve], minutesLeft * flowRate currentValve)
+    | otherwise = do 
+        let solutions = (\v -> solve adjMap pathMap (Data.Set.delete v closedValves) (minutesLeft - length (fromJust $ (name currentValve, name v) `Data.Map.lookup` pathMap)) v) <$> Data.Set.toList closedValves
+        let bestSolution = maximumBy (\s1 s2 -> snd s1 `compare` snd s2) solutions
+        (name currentValve : fst bestSolution, snd bestSolution + minutesLeft * snd currentValve)
 
 
-takeActionbetter :: AdjacencyMap -> (Minutes, Valve, ClosedValves, Int) -> (Minutes, Valve, ClosedValves, Int) 
-takeActionbetter adjMap (minutesLeft, currentValve, closedValves, points) = do
-    let possibleTargets = Data.Set.toList closedValves 
-    let pairs = do
-            firsts <- (possibleTargets)
-            seconds <- (possibleTargets)
-            -- thirds <- (possibleTargets)
-            -- fourths <- (possibleTargets)
-            -- fifths <- (possibleTargets)
-            -- sixths <- (possibleTargets)
-            -- sevenths <- (possibleTargets)
-            Prelude.filter ((2== ) . length . nub) (return [firsts, seconds])
-    let results = (\x -> recursivelyCarryOut adjMap x (minutesLeft, currentValve, closedValves, points)) <$> pairs
-    let z = zip (fmap name <$>pairs) (prettyPrintResult <$> results)
-    let points = (\(_, _, _, pts) -> pts) 
-    error $ show $ maximumBy (\t1 t2 -> points (snd t1) `compare` points (snd t2)) (zip pairs results)
-    -- error $ unlines $ show <$> z
+timeAfterMove :: ShortestPathMap -> TimeLeft -> ValveName -> ValveName -> Minutes
+timeAfterMove pathMap currentTime startValve endValve = do
+    let lookup = (startValve, endValve) `Data.Map.lookup` pathMap
     
-    -- let firstResults = (\t -> carryOut adjMap t (minutesLeft, currentValve, closedValves, points)) <$> possibleTargets
-    -- let secondResults = (\(mleft, curv, closv, scor) -> (\x -> carryOut adjMap  x (mleft, curv, closv, scor)) <$> Data.Set.toList closv ) <$> firstResults
+    let timeLeft = if isNothing lookup then error ("Couldn't find " ++ startValve ++ "->" ++ endValve) else currentTime - length (fromJust lookup)
+    max timeLeft 0
 
-    -- let z = zip (prettyPrintResult <$> firstResults) (fmap prettyPrintResult <$> secondResults)
-    -- error $ concat $ (\(fst, seconds) -> fst ++ "\n" ++ (unlines $ ("\t" ++ ) <$> seconds)) <$> z
+solve2 :: AdjacencyMap -> ShortestPathMap -> ClosedValves -> (TimeLeft, TimeLeft) -> (Valve, Valve) -> ([ValveName], [ValveName], Int)
+solve2 adjMap pathMap closedValves (myMinutes, elephantMinutes) (myValve, elephantValve)
+    | Data.Set.null newClosedValves = ([name myValve], [name elephantValve], (max 0 myMinutes) * snd myValve + (max 0 elephantMinutes) * snd elephantValve)
+    | Data.Set.size newClosedValves == 1 = do
+        let baseScore = (myMinutes * flowRate myValve) + (elephantMinutes * flowRate elephantValve)
+        let remainingValve = head (Data.Set.toList closedValves)
+        let myOpeningTime = myMinutes - length (fromJust $ (name myValve, name remainingValve) `Data.Map.lookup` pathMap)
+        let elephantOpeningTime = elephantMinutes - length (fromJust $ (name elephantValve, name remainingValve) `Data.Map.lookup` pathMap)
+        if myOpeningTime > elephantOpeningTime 
+            then ([name myValve, name remainingValve],                      [name elephantValve], baseScore + (myOpeningTime * flowRate remainingValve))
+            else ([name myValve],                      [name elephantValve, name remainingValve], baseScore + (elephantOpeningTime * flowRate remainingValve))
+    | myMinutes <= 0 && elephantMinutes <= 0 = ([name myValve], [name elephantValve], 0)
+    | otherwise = do
+        let nextValves = [(v1, v2) | v1 <- Data.Set.toList newClosedValves, v2 <- Data.Set.toList newClosedValves, name v1 /= name v2 ]
 
+        let possibleNextSteps = 
+                (\(myNextValve, elephantNextValve) -> 
+                    solve2 
+                        adjMap 
+                        pathMap 
+                        newClosedValves 
+                        (
+                            timeAfterMove pathMap myMinutes       (name myValve)       (name myNextValve),
+                            timeAfterMove pathMap elephantMinutes (name elephantValve) (name elephantNextValve)
+                        ) 
+                        (myNextValve, elephantNextValve)
+                ) 
+                <$> nextValves
 
-carryOut :: AdjacencyMap -> Valve -> (Minutes, Valve, ClosedValves, Int) -> (Minutes, Valve, ClosedValves, Int)
-carryOut adjMap targetValve (minutesLeft, currentValve, closedValves, points) = do
-    let path = pathTo adjMap Data.Set.empty (name currentValve) (name targetValve)
-    let timeLeftAfterOpening = minutesLeft - length (fromJust path)
-    (timeLeftAfterOpening, targetValve, targetValve `Data.Set.delete` closedValves, points + (flowRate targetValve * timeLeftAfterOpening))
+        
+        
+        let bestPossibility = maximumBy (\s1 s2 -> thd s1 `compare` thd s2) (if Prelude.null possibleNextSteps then error (show newClosedValves) else possibleNextSteps)
+        (name myValve : fst3 bestPossibility, name elephantValve : snd3 bestPossibility, thd bestPossibility + ((max 0 myMinutes) * flowRate myValve) + ((max 0 elephantMinutes) * flowRate elephantValve))
+    where 
+        newClosedValves = elephantValve `Data.Set.delete` (myValve `Data.Set.delete` closedValves)
 
-
-recursivelyCarryOut :: AdjacencyMap -> [Valve] -> (Minutes, Valve, ClosedValves, Int) -> (Minutes, Valve, ClosedValves, Int)
-recursivelyCarryOut adjMap [] (timeLeft, currValve, closedValves, points) = (timeLeft, currValve, closedValves, points)  
-recursivelyCarryOut adjMap (nextValve:rest) (timeLeft, currValve, closedValves, points) = recursivelyCarryOut adjMap rest (carryOut adjMap nextValve (timeLeft, currValve, closedValves, points))  
 
 part1 input = do
-    let valves = rights $ (runParser parseValve () "") <$> (lines input)
-    let adjMap = buildMap valves
-    let closedValves = Data.Set.fromList (fst <$> valves) :: ClosedValves
-    print $ takeActionbetter adjMap (30, (fst . head) valves, closedValves, 0)
+    let valvesWithNeighbors = rights $ runParser parseValve () "" <$> lines input
+    let adjMap = buildMap valvesWithNeighbors
+    let shortestPathMap = buildShortestPathMap adjMap
+    let nonZeroValves = Prelude.filter (\a -> snd a > 0) (fst <$> valvesWithNeighbors)
+    let startValve = fromJust $ find (\v -> name v == "AA") (fst <$> valvesWithNeighbors)
+    let closedValves = Data.Set.fromList nonZeroValves
+    let solution = solve adjMap shortestPathMap (startValve `Data.Set.delete` closedValves) 30 startValve
+    print $ solution
 
+part2 input = do
+    let valvesWithNeighbors = rights $ runParser parseValve () "" <$> lines input
+    let adjMap = buildMap valvesWithNeighbors
+    let shortestPathMap = buildShortestPathMap adjMap
+    let nonZeroValves = Prelude.filter (\a -> snd a > 0) (fst <$> valvesWithNeighbors)
+    let startValve = fromJust $ find (\v -> name v == "AA") (fst <$> valvesWithNeighbors)
+    let closedValves = Data.Set.fromList nonZeroValves
+    let solution = solve2 adjMap shortestPathMap (startValve `Data.Set.delete` closedValves) (14, 14) (startValve, startValve)
+    print $ solution
 
+bisect:: [a] -> Int -> ([a], [a])
+bisect list mask = do
+    let left = filter (\(ind, el) -> (mask .&. (2^ind)) > 0) (zip [0..] list)
+    let right = filter (\(ind, el) -> ((complement mask) .&. (2^ind)) > 0) (zip [0..] list)
+    (snd <$> left, snd <$> right)
 
-
+part2a input = do
+    let valvesWithNeighbors = rights $ runParser parseValve () "" <$> lines input
+    let adjMap = buildMap valvesWithNeighbors
+    let shortestPathMap = buildShortestPathMap adjMap
+    let startValve = fromJust $ find (\v -> name v == "AA") (fst <$> valvesWithNeighbors)
+    let nonZeroValves = Prelude.filter (\a -> snd a > 0) (fst <$> valvesWithNeighbors)
+    let bisections = bisect nonZeroValves <$> [0..(2^length nonZeroValves)]
+    let closedSets = (\(l, r) -> (Data.Set.fromList (l), Data.Set.fromList (r))) <$> bisections
+    print $ length closedSets
+    let solutions = (\(c1, c2) -> 
+            (solve adjMap shortestPathMap c1 26 startValve,
+             solve adjMap shortestPathMap c2 26 startValve)) <$> (closedSets)
+    print $ length solutions
+    let scores = (\(a, b) -> snd a + snd b) <$> solutions
+    let bestSolution = maximum scores
+    print bestSolution
 main = do
     input <- readFile "input.txt"
     part1 input
+    part2a input
